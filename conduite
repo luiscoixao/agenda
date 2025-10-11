@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier Suivi Heures de Conduite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .header {
+            background: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        .calendar {
+            display: flex;
+            flex-direction: column;
+        }
+        .row {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .cell {
+            flex: 1;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .cell.header {
+            font-weight: bold;
+            background: #f9f9f9;
+        }
+        .notes {
+            flex: 2;
+            word-wrap: break-word;
+        }
+        .upcoming {
+            background-color: #d4f0d4;
+        }
+        @media (max-width: 400px) {
+            .cell, .notes {
+                font-size: 12px;
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Suivi des Heures de Conduite</div>
+        <div class="calendar">
+            <div class="row">
+                <div class="cell header">Jour</div>
+                <div class="cell header">Date</div>
+                <div class="cell header">Heure</div>
+                <div class="cell header notes">Notes</div>
+            </div>
+            <div class="row upcoming">
+                <div class="cell">Mardi</div>
+                <div class="cell">14/10</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Jeudi</div>
+                <div class="cell">16/10</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Mardi</div>
+                <div class="cell">21/10</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Vendredi</div>
+                <div class="cell">24/10</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Mardi</div>
+                <div class="cell">28/10</div>
+                <div class="cell">10h-12h</div>
+                <div class="cell notes">(2 heures)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Vendredi</div>
+                <div class="cell">6/11</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Mardi</div>
+                <div class="cell">18/11</div>
+                <div class="cell">10h-12h</div>
+                <div class="cell notes">(2 heures)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Jeudi</div>
+                <div class="cell">20/11</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Mardi</div>
+                <div class="cell">25/11</div>
+                <div class="cell">10h-12h</div>
+                <div class="cell notes">(2 heures)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Jeudi</div>
+                <div class="cell">28/11</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Mardi</div>
+                <div class="cell">2/12</div>
+                <div class="cell">10h-12h</div>
+                <div class="cell notes">(2 heures)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Jeudi</div>
+                <div class="cell">4/12</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Vendredi</div>
+                <div class="cell">5/12</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Mardi</div>
+                <div class="cell">9/12</div>
+                <div class="cell">10h-12h</div>
+                <div class="cell notes">(2 heures)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Vendredi</div>
+                <div class="cell">12/12</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Vendredi</div>
+                <div class="cell">12/12</div>
+                <div class="cell">11h-12h</div>
+                <div class="cell notes">(1 heure) (Parents)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Mardi</div>
+                <div class="cell">16/12</div>
+                <div class="cell">10h-12h</div>
+                <div class="cell notes">(2 heures)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Jeudi</div>
+                <div class="cell">18/12</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+            <div class="row">
+                <div class="cell">Vendredi</div>
+                <div class="cell">19/12</div>
+                <div class="cell">10h-11h</div>
+                <div class="cell notes">(1 heure)</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
