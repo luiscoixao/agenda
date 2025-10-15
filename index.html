@@ -188,7 +188,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const rows = document.querySelectorAll('.calendar .row:not(:first-child)');
-            const today = new Date('2025-10-15');
+            const today = new Date();
+        
 
             let closestRow = null;
             let closestDate = null;
