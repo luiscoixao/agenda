@@ -4,7 +4,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Agenda Stylé</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #FF6584;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --light-gray: #e9ecef;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 25px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, var(--white), #f0f2f5);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .input-container {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #new-task-input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            font-size: 16px;
+        }
+
+        #new-task-datetime {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            font-size: 14px;
+        }
+
+        #add-task-btn {
+            flex: 0 0 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            shrink: 0;
+        }
+
+        #add-task-btn:active {
+            transform: scale(0.95);
+        }
+
+        #task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #task-list li {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        #task-list li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        #task-list li input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.5);
+            accent-color: var(--primary-color);
+            transition: transform 0.2s;
+        }
+
+        #task-list li .task-info {
+            flex: 1;
+        }
+
+        #task-list li .task-text {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        #task-list li .task-time {
+            font-size: 12px;
+            color: var(--secondary-color);
+        }
+
+        #task-list li .delete-btn {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        #task-list li .delete-btn:active {
+            transform: scale(0.95);
+        }
+
+        #task-list li.completed .task-text {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+
+        #task-list li.completed .task-time {
+            color: #ccc;
+        }
+
+        #task-list li.completed {
+            opacity: 0.7;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: scale(0.98);
+        }
+
+        svg[style="display: none;"] {
+            display: none;
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -22,6 +193,176 @@
         </div>
         <ul id="task-list"></ul>
     </div>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskInput = document.getElementById('new-task-input');
+            const taskDatetimeInput = document.getElementById('new-task-datetime');
+            const addTaskBtn = document.getElementById('add-task-btn');
+            const taskList = document.getElementById('task-list');
+
+            loadTasks();
+
+            addTaskBtn.addEventListener('click', addTask);
+            taskInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addTask();
+                }
+            });
+
+            function addTask() {
+                const taskText = taskInput.value.trim();
+                const taskDatetime = taskDatetimeInput.value;
+                if (taskText) {
+                    const taskId = Date.now().toString();
+                    const formattedDatetime = taskDatetime ? formatDate(new Date(taskDatetime)) : 'Aucune date';
+
+                    const taskItem = document.createElement('li');
+                    taskItem.dataset.id = taskId;
+                    taskItem.innerHTML = `
+                        <input type="checkbox" id="task-${taskId}">
+                        <div class="task-info">
+                            <div class="task-text">${taskText}</div>
+                            <div class="task-time">${formattedDatetime}</div>
+                        </div>
+                        <button class="delete-btn" data-id="${taskId}">
+                            <svg width="20" height="20" fill="currentColor">
+                                <use xlink:href="#trash-icon"></use>
+                            </svg>
+                        </button>
+                    `;
+                    taskList.appendChild(taskItem);
+
+                    taskInput.value = '';
+                    taskDatetimeInput.value = '';
+
+                    saveTask(taskId, taskText, taskDatetime, false);
+
+                    const checkbox = taskItem.querySelector(`input[type="checkbox"]`);
+                    checkbox.addEventListener('change', () => toggleTask(taskId, checkbox.checked));
+
+                    const deleteBtn = taskItem.querySelector('.delete-btn');
+                    deleteBtn.addEventListener('click', () => deleteTask(taskId));
+
+                    scheduleNotification(taskText, taskDatetime);
+                }
+            }
+
+            function formatDate(date) {
+                return date.toLocaleString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            function toggleTask(taskId, isCompleted) {
+                const taskItem = document.querySelector(`li[data-id="${taskId}"]`);
+                if (taskItem) {
+                    if (isCompleted) {
+                        taskItem.classList.add('completed');
+                    } else {
+                        taskItem.classList.remove('completed');
+                    }
+                    const taskText = taskItem.querySelector('.task-text').textContent;
+                    const taskTimeElement = taskItem.querySelector('.task-time');
+                    const taskTime = taskTimeElement.textContent === 'Aucune date' ? null : new Date(taskTimeElement.dataset.datetime).toISOString();
+                    saveTask(taskId, taskText, taskTime, isCompleted);
+                }
+            }
+
+            function deleteTask(taskId) {
+                const taskItem = document.querySelector(`li[data-id="${taskId}"]`);
+                if (taskItem) {
+                    taskItem.remove();
+                    deleteTaskFromStorage(taskId);
+                }
+            }
+
+            function saveTask(id, text, time, completed) {
+                let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+                const taskIndex = tasks.findIndex(task => task.id === id);
+                if (taskIndex >= 0) {
+                    tasks[taskIndex] = { id, text, time, completed };
+                } else {
+                    tasks.push({ id, text, time, completed });
+                }
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
+
+            function deleteTaskFromStorage(id) {
+                let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+                tasks = tasks.filter(task => task.id !== id);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
+
+            function loadTasks() {
+                const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('li');
+                    taskItem.dataset.id = task.id;
+                    const formattedDatetime = task.time ? formatDate(new Date(task.time)) : 'Aucune date';
+                    taskItem.innerHTML = `
+                        <input type="checkbox" id="task-${task.id}" ${task.completed ? 'checked' : ''}>
+                        <div class="task-info">
+                            <div class="task-text">${task.text}</div>
+                            <div class="task-time" ${task.time ? `data-datetime="${task.time}"` : ''}>${formattedDatetime}</div>
+                        </div>
+                        <button class="delete-btn" data-id="${task.id}">
+                            <svg width="20" height="20" fill="currentColor">
+                                <use xlink:href="#trash-icon"></use>
+                            </svg>
+                        </button>
+                    `;
+                    if (task.completed) {
+                        taskItem.classList.add('completed');
+                    }
+                    taskList.appendChild(taskItem);
+
+                    const checkbox = taskItem.querySelector(`input[type="checkbox"]`);
+                    checkbox.addEventListener('change', () => toggleTask(task.id, checkbox.checked));
+
+                    const deleteBtn = taskItem.querySelector('.delete-btn');
+                    deleteBtn.addEventListener('click', () => deleteTask(task.id));
+                });
+            }
+
+            function scheduleNotification(taskText, taskDatetime) {
+                if (!taskDatetime) return;
+
+                const now = new Date();
+                const taskTime = new Date(taskDatetime);
+
+                if (taskTime <= now) return;
+
+                const timeUntilNotification = taskTime - now;
+
+                setTimeout(() => {
+                    if (!("Notification" in window)) {
+                        alert(`Rappel : ${taskText}`);
+                    } else if (Notification.permission === "granted") {
+                        new Notification(`Rappel : ${taskText}`);
+                    } else if (Notification.permission !== "denied") {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === "granted") {
+                                new Notification(`Rappel : ${taskText}`);
+                            } else {
+                                alert(`Rappel : ${taskText}`);
+                            }
+                        });
+                    } else {
+                        alert(`Rappel : ${taskText}`);
+                    }
+                }, timeUntilNotification);
+            }
+
+            if (!("Notification" in window)) {
+                console.log("Ce navigateur ne supporte pas les notifications.");
+            } else {
+                Notification.requestPermission();
+            }
+        });
+    </script>
 </body>
 </html>
