@@ -4,8 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const addTaskBtn = document.getElementById('add-task-btn');
     const taskList = document.getElementById('task-list');
 
+    // Charger les tâches sauvegardées
     loadTasks();
 
+    // Ajouter une tâche
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -18,11 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const taskDatetime = taskDatetimeInput.value;
         if (taskText) {
             const taskId = Date.now().toString();
-            const taskItem = document.createElement('li');
-            taskItem.dataset.id = taskId;
-
             const formattedDatetime = taskDatetime ? formatDate(new Date(taskDatetime)) : 'Aucune date';
 
+            const taskItem = document.createElement('li');
+            taskItem.dataset.id = taskId;
             taskItem.innerHTML = `
                 <input type="checkbox" id="task-${taskId}">
                 <div class="task-info">
@@ -32,17 +33,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="delete-btn" data-id="${taskId}">🗑️</button>
             `;
             taskList.appendChild(taskItem);
+
+            // Effacer les champs
             taskInput.value = '';
             taskDatetimeInput.value = '';
 
+            // Sauvegarder la tâche
             saveTask(taskId, taskText, taskDatetime, false);
 
+            // Ajouter les écouteurs d'événements
             const checkbox = taskItem.querySelector(`input[type="checkbox"]`);
             checkbox.addEventListener('change', () => toggleTask(taskId, checkbox.checked));
 
             const deleteBtn = taskItem.querySelector('.delete-btn');
             deleteBtn.addEventListener('click', () => deleteTask(taskId));
 
+            // Planifier un rappel
             scheduleNotification(taskText, taskDatetime);
         }
     }
