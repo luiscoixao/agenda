@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const taskInput = document.getElementById('new-task-input');
+    const taskDatetimeInput = document.getElementById('new-task-datetime');
     const addTaskBtn = document.getElementById('add-task-btn');
     const taskList = document.getElementById('task-list');
 
-    // Charger les tâches sauvegardées
     loadTasks();
 
-    // Ajouter une tâche
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -16,29 +15,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addTask() {
         const taskText = taskInput.value.trim();
+        const taskDatetime = taskDatetimeInput.value;
         if (taskText) {
             const taskId = Date.now().toString();
             const taskItem = document.createElement('li');
             taskItem.dataset.id = taskId;
+
+            const formattedDatetime = taskDatetime ? formatDate(new Date(taskDatetime)) : 'Aucune date';
+
             taskItem.innerHTML = `
                 <input type="checkbox" id="task-${taskId}">
-                <label for="task-${taskId}">${taskText}</label>
-                <button class="delete-btn" data-id="${taskId}">Supprimer</button>
+                <div class="task-info">
+                    <div class="task-text">${taskText}</div>
+                    <div class="task-time">${formattedDatetime}</div>
+                </div>
+                <button class="delete-btn" data-id="${taskId}">🗑️</button>
             `;
             taskList.appendChild(taskItem);
             taskInput.value = '';
+            taskDatetimeInput.value = '';
 
-            // Sauvegarder la tâche
-            saveTask(taskId, taskText, false);
+            saveTask(taskId, taskText, taskDatetime, false);
 
-            // Ajouter un écouteur d'événement pour la case à cocher
             const checkbox = taskItem.querySelector(`input[type="checkbox"]`);
             checkbox.addEventListener('change', () => toggleTask(taskId, checkbox.checked));
 
-            // Ajouter un écouteur d'événement pour le bouton supprimer
             const deleteBtn = taskItem.querySelector('.delete-btn');
             deleteBtn.addEventListener('click', () => deleteTask(taskId));
+
+            scheduleNotification(taskText, taskDatetime);
         }
+    }
+
+    function formatDate(date) {
+        return date.toLocaleString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 
     function toggleTask(taskId, isCompleted) {
@@ -49,9 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 taskItem.classList.remove('completed');
             }
-            // Mettre à jour la tâche dans le stockage local
-            const taskText = taskItem.querySelector('label').textContent;
-            saveTask(taskId, taskText, isCompleted);
+            const taskText = taskItem.querySelector('.task-text').textContent;
+            const taskTimeElement = taskItem.querySelector('.task-time');
+            const taskTime = taskTimeElement.textContent === 'Aucune date' ? null : new Date(taskTimeElement.dataset.datetime).toISOString();
+            saveTask(taskId, taskText, taskTime, isCompleted);
         }
     }
 
@@ -59,18 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const taskItem = document.querySelector(`li[data-id="${taskId}"]`);
         if (taskItem) {
             taskItem.remove();
-            // Supprimer la tâche du stockage local
             deleteTaskFromStorage(taskId);
         }
     }
 
-    function saveTask(id, text, completed) {
+    function saveTask(id, text, time, completed) {
         let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
         const taskIndex = tasks.findIndex(task => task.id === id);
         if (taskIndex >= 0) {
-            tasks[taskIndex] = { id, text, completed };
+            tasks[taskIndex] = { id, text, time, completed };
         } else {
-            tasks.push({ id, text, completed });
+            tasks.push({ id, text, time, completed });
         }
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
@@ -86,22 +102,40 @@ document.addEventListener('DOMContentLoaded', () => {
         tasks.forEach(task => {
             const taskItem = document.createElement('li');
             taskItem.dataset.id = task.id;
+            const formattedDatetime = task.time ? formatDate(new Date(task.time)) : 'Aucune date';
             taskItem.innerHTML = `
                 <input type="checkbox" id="task-${task.id}" ${task.completed ? 'checked' : ''}>
-                <label for="task-${task.id}">${task.text}</label>
-                <button class="delete-btn" data-id="${task.id}">Supprimer</button>
+                <div class="task-info">
+                    <div class="task-text">${task.text}</div>
+                    <div class="task-time" ${task.time ? `data-datetime="${task.time}"` : ''}>${formattedDatetime}</div>
+                </div>
+                <button class="delete-btn" data-id="${task.id}">🗑️</button>
             `;
             if (task.completed) {
                 taskItem.classList.add('completed');
             }
             taskList.appendChild(taskItem);
 
-            // Ajouter les écouteurs d'événements
             const checkbox = taskItem.querySelector(`input[type="checkbox"]`);
             checkbox.addEventListener('change', () => toggleTask(task.id, checkbox.checked));
 
             const deleteBtn = taskItem.querySelector('.delete-btn');
             deleteBtn.addEventListener('click', () => deleteTask(task.id));
         });
+    }
+
+    function scheduleNotification(taskText, taskDatetime) {
+        if (!taskDatetime) return;
+
+        const now = new Date();
+        const taskTime = new Date(taskDatetime);
+
+        if (taskTime <= now) return;
+
+        const timeUntilNotification = taskTime - now;
+
+        setTimeout(() => {
+            alert(`Rappel : ${taskText}`);
+        }, timeUntilNotification);
     }
 });
