@@ -2,16 +2,20 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Tâches</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Agenda Stylé</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-512x512.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>Mes Tâches</h1>
+        <h1>Agenda</h1>
         <div class="input-container">
-            <input type="text" id="new-task-input" placeholder="Ajouter une tâche...">
-            <button id="add-task-btn">Ajouter</button>
+            <input type="text" id="new-task-input" placeholder="Nouvelle tâche...">
+            <input type="datetime-local" id="new-task-datetime">
+            <button id="add-task-btn">+</button>
         </div>
         <ul id="task-list"></ul>
     </div>
