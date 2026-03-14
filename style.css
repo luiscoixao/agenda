@@ -1,51 +1,15 @@
-:root {
-    --primary-color: #6C63FF;
-    --secondary-color: #FF6584;
-    --background-color: #f8f9fa;
-    --text-color: #333;
-    --light-gray: #e9ecef;
-    --white: #ffffff;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --border-radius: 10px;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--background-color);
-    margin: 0;
-    padding: 20px;
-    color: var(--text-color);
-}
-
-.container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    background: linear-gradient(135deg, var(--white), #f0f2f5);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    text-align: center;
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-bottom: 20px;
-    font-size: 28px;
-}
-
 .input-container {
     display: flex;
     margin-bottom: 20px;
-    gap: 10px;
     align-items: center;
+    gap: 10px;
 }
 
 #new-task-input {
-    flex: 2;
+    flex: 1;
     padding: 15px;
     border: none;
-    border-radius: var(--border-radius);
+    border-radius: 25px;
     background-color: var(--white);
     box-shadow: var(--shadow);
     font-size: 16px;
@@ -55,7 +19,7 @@ h1 {
     flex: 1;
     padding: 15px;
     border: none;
-    border-radius: var(--border-radius);
+    border-radius: 25px;
     background-color: var(--white);
     box-shadow: var(--shadow);
     font-size: 14px;
@@ -74,92 +38,7 @@ h1 {
     justify-content: center;
     box-shadow: var(--shadow);
     cursor: pointer;
-}
-
-#add-task-btn:active {
-    transform: scale(0.95);
-}
-
-#task-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-#task-list li {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: var(--border-radius);
-    background-color: var(--white);
-    box-shadow: var(--shadow);
-    transition: transform 0.2s;
-}
-
-#task-list li:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-#task-list li input[type="checkbox"] {
-    margin-right: 15px;
-    transform: scale(1.5);
-    accent-color: var(--primary-color);
-    transition: transform 0.2s;
-}
-
-#task-list li .task-info {
-    flex: 1;
-}
-
-#task-list li .task-text {
-    font-weight: 500;
-    margin-bottom: 5px;
-    font-size: 16px;
-}
-
-#task-list li .task-time {
-    font-size: 12px;
-    color: var(--secondary-color);
-}
-
-#task-list li .delete-btn {
-    background-color: var(--secondary-color);
-    color: var(--white);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s;
-}
-
-#task-list li .delete-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-#task-list li .delete-btn:active {
-    transform: scale(0.95);
-}
-
-#task-list li.completed .task-text {
-    text-decoration: line-through;
-    color: #aaa;
-}
-
-#task-list li.completed .task-time {
-    color: #ccc;
-}
-
-#task-list li.completed {
-    opacity: 0.7;
-    transition: opacity 0.3s, transform 0.3s;
-    transform: scale(0.98);
+    margin-left: 10px;
+    position: relative;
+    z-index: 1;
 }
