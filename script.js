@@ -4,10 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const addTaskBtn = document.getElementById('add-task-btn');
     const taskList = document.getElementById('task-list');
 
-    // Charger les tâches sauvegardées
     loadTasks();
 
-    // Ajouter une tâche
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -30,25 +28,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="task-text">${taskText}</div>
                     <div class="task-time">${formattedDatetime}</div>
                 </div>
-                <button class="delete-btn" data-id="${taskId}">🗑️</button>
+                <button class="delete-btn" data-id="${taskId}">
+                    <svg width="20" height="20" fill="currentColor">
+                        <use xlink:href="#trash-icon"></use>
+                    </svg>
+                </button>
             `;
             taskList.appendChild(taskItem);
 
-            // Effacer les champs
             taskInput.value = '';
             taskDatetimeInput.value = '';
 
-            // Sauvegarder la tâche
             saveTask(taskId, taskText, taskDatetime, false);
 
-            // Ajouter les écouteurs d'événements
             const checkbox = taskItem.querySelector(`input[type="checkbox"]`);
             checkbox.addEventListener('change', () => toggleTask(taskId, checkbox.checked));
 
             const deleteBtn = taskItem.querySelector('.delete-btn');
             deleteBtn.addEventListener('click', () => deleteTask(taskId));
 
-            // Planifier un rappel
             scheduleNotification(taskText, taskDatetime);
         }
     }
@@ -115,7 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="task-text">${task.text}</div>
                     <div class="task-time" ${task.time ? `data-datetime="${task.time}"` : ''}>${formattedDatetime}</div>
                 </div>
-                <button class="delete-btn" data-id="${task.id}">🗑️</button>
+                <button class="delete-btn" data-id="${task.id}">
+                    <svg width="20" height="20" fill="currentColor">
+                        <use xlink:href="#trash-icon"></use>
+                    </svg>
+                </button>
             `;
             if (task.completed) {
                 taskItem.classList.add('completed');
@@ -141,7 +143,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const timeUntilNotification = taskTime - now;
 
         setTimeout(() => {
-            alert(`Rappel : ${taskText}`);
+            if (!("Notification" in window)) {
+                alert(`Rappel : ${taskText}`);
+            } else if (Notification.permission === "granted") {
+                new Notification(`Rappel : ${taskText}`);
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification(`Rappel : ${taskText}`);
+                    } else {
+                        alert(`Rappel : ${taskText}`);
+                    }
+                });
+            } else {
+                alert(`Rappel : ${taskText}`);
+            }
         }, timeUntilNotification);
+    }
+
+    if (!("Notification" in window)) {
+        console.log("Ce navigateur ne supporte pas les notifications.");
+    } else {
+        Notification.requestPermission();
     }
 });
