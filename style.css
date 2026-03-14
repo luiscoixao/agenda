@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+.input-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#new-task-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+#add-task-btn {
+    padding: 10px 15px;
+    background-color: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#add-task-btn:hover {
+    background-color: #0056b3;
+}
+
+#task-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#task-list li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#task-list li:last-child {
+    border-bottom: none;
+}
+
+#task-list li input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+#task-list li .delete-btn {
+    margin-left: auto;
+    background-color: #ff3b30;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#task-list li .delete-btn:hover {
+    background-color: #d63429;
+}
+
+#task-list li.completed {
+    opacity: 0.6;
+}
+
+#task-list li.completed label {
+    text-decoration: line-through;
+}
