@@ -5,6 +5,8 @@
     --text-color: #333;
     --light-gray: #e9ecef;
     --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --border-radius: 10px;
 }
 
 body {
@@ -16,9 +18,12 @@ body {
 }
 
 .container {
-    max-width: 100%;
-    margin: 0 auto;
+    max-width: 600px;
+    margin: 20px auto;
     padding: 20px;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, var(--white), #f0f2f5);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -26,6 +31,7 @@ h1 {
     color: var(--primary-color);
     font-weight: 600;
     margin-bottom: 20px;
+    font-size: 28px;
 }
 
 .input-container {
@@ -39,9 +45,9 @@ h1 {
     flex: 2;
     padding: 15px;
     border: none;
-    border-radius: 25px;
+    border-radius: var(--border-radius);
     background-color: var(--white);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
     font-size: 16px;
 }
 
@@ -49,9 +55,9 @@ h1 {
     flex: 1;
     padding: 15px;
     border: none;
-    border-radius: 25px;
+    border-radius: var(--border-radius);
     background-color: var(--white);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
     font-size: 14px;
 }
 
@@ -66,7 +72,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
     cursor: pointer;
 }
 
@@ -84,14 +90,22 @@ h1 {
     align-items: center;
     padding: 15px;
     margin-bottom: 10px;
-    border-radius: 10px;
+    border-radius: var(--border-radius);
     background-color: var(--white);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+#task-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 #task-list li input[type="checkbox"] {
     margin-right: 15px;
     transform: scale(1.5);
+    accent-color: var(--primary-color);
+    transition: transform 0.2s;
 }
 
 #task-list li .task-info {
@@ -101,6 +115,7 @@ h1 {
 #task-list li .task-text {
     font-weight: 500;
     margin-bottom: 5px;
+    font-size: 16px;
 }
 
 #task-list li .task-time {
@@ -120,7 +135,14 @@ h1 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+#task-list li .delete-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
 }
 
 #task-list li .delete-btn:active {
@@ -134,4 +156,10 @@ h1 {
 
 #task-list li.completed .task-time {
     color: #ccc;
+}
+
+#task-list li.completed {
+    opacity: 0.7;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: scale(0.98);
 }
