@@ -1,229 +1,238 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="apple-touch-icon" href="icon.png">
-<title>Rappels</title>
-<style>
-  * { box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rappels</title>
+  <style>
+    * { box-sizing: border-box; }
 
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    background: #f2f2f7;
-    color: #111;
-    padding: 20px 16px 32px;
-  }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: #f2f2f7;
+      color: #111;
+      padding: 20px 16px 32px;
+    }
 
-  .app {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  h1 {
-    font-size: 42px;
-    line-height: 1.05;
-    margin: 8px 4px 20px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-
-  .card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 14px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    margin-bottom: 16px;
-  }
-
-  .composer {
-    display: grid;
-    grid-template-columns: 1fr auto auto auto;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .text-input {
-    width: 100%;
-    border: 1px solid #e5e5ea;
-    background: #fff;
-    border-radius: 14px;
-    height: 48px;
-    padding: 0 14px;
-    font-size: 17px;
-    outline: none;
-  }
-
-  .text-input:focus,
-  .time-input:focus {
-    border-color: #0a84ff;
-  }
-
-  .date-wrap {
-    position: relative;
-    width: 52px;
-    height: 48px;
-    border-radius: 14px;
-    background: #f2f2f7;
-    border: 1px solid #e5e5ea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .date-icon {
-    font-size: 22px;
-    pointer-events: none;
-  }
-
-  .date-input {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .time-input {
-    width: 82px;
-    height: 48px;
-    border: 1px solid #e5e5ea;
-    background: #f2f2f7;
-    border-radius: 14px;
-    padding: 0 10px;
-    font-size: 16px;
-    outline: none;
-    color: #111;
-  }
-
-  .add-btn {
-    width: 48px;
-    height: 48px;
-    border: none;
-    border-radius: 14px;
-    background: #0a84ff;
-    color: white;
-    font-size: 28px;
-    line-height: 1;
-    font-weight: 500;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  .add-btn:active {
-    transform: scale(0.97);
-  }
-
-  .date-label {
-    margin-top: 10px;
-    padding-left: 4px;
-    font-size: 14px;
-    color: #6e6e73;
-    min-height: 18px;
-  }
-
-  .list-card {
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-
-  .task {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    gap: 12px;
-    align-items: center;
-    padding: 16px 4px;
-    border-bottom: 1px solid #f0f0f4;
-  }
-
-  .task:last-child {
-    border-bottom: none;
-  }
-
-  .checkbox {
-    width: 28px;
-    height: 28px;
-    border-radius: 999px;
-    border: 2px solid #c7c7cc;
-    background: #fff;
-    appearance: none;
-    cursor: pointer;
-    position: relative;
-    margin: 0;
-  }
-
-  .checkbox:checked {
-    background: #34c759;
-    border-color: #34c759;
-  }
-
-  .checkbox:checked::after {
-    content: "✓";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  .task-main {
-    min-width: 0;
-  }
-
-  .task-title {
-    font-size: 17px;
-    line-height: 1.3;
-    word-break: break-word;
-  }
-
-  .done .task-title {
-    color: #8e8e93;
-    text-decoration: line-through;
-  }
-
-  .task-date {
-    margin-top: 4px;
-    font-size: 13px;
-    color: #8e8e93;
-  }
-
-  .delete-btn {
-    border: none;
-    background: #fff2f2;
-    color: #ff3b30;
-    border-radius: 12px;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    cursor: pointer;
-  }
-
-  .empty {
-    text-align: center;
-    color: #8e8e93;
-    font-size: 17px;
-    padding: 30px 12px;
-  }
-
-  @media (max-width: 580px) {
-    .composer {
-      grid-template-columns: 1fr 48px 82px 48px;
+    .app {
+      max-width: 680px;
+      margin: 0 auto;
     }
 
     h1 {
-      font-size: 38px;
+      font-size: 42px;
+      line-height: 1.05;
+      margin: 8px 4px 20px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
     }
-  }
-</style>
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+    }
+
+    .reminder-banner {
+      background: #fff8e8;
+      border: 1px solid #f6df9b;
+      color: #7a5a00;
+      padding: 14px 16px;
+      font-size: 15px;
+    }
+
+    .composer {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .text-input {
+      width: 100%;
+      border: 1px solid #e5e5ea;
+      background: #fff;
+      border-radius: 14px;
+      height: 48px;
+      padding: 0 14px;
+      font-size: 17px;
+      outline: none;
+    }
+
+    .text-input:focus,
+    .time-input:focus {
+      border-color: #0a84ff;
+    }
+
+    .date-wrap {
+      position: relative;
+      width: 52px;
+      height: 48px;
+      border-radius: 14px;
+      background: #f2f2f7;
+      border: 1px solid #e5e5ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .date-icon {
+      font-size: 22px;
+      pointer-events: none;
+    }
+
+    .date-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .time-input {
+      width: 82px;
+      height: 48px;
+      border: 1px solid #e5e5ea;
+      background: #f2f2f7;
+      border-radius: 14px;
+      padding: 0 10px;
+      font-size: 16px;
+      outline: none;
+      color: #111;
+    }
+
+    .add-btn {
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 14px;
+      background: #0a84ff;
+      color: white;
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 500;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .add-btn:active {
+      transform: scale(0.97);
+    }
+
+    .date-label {
+      margin-top: 10px;
+      padding-left: 4px;
+      font-size: 14px;
+      color: #6e6e73;
+      min-height: 18px;
+    }
+
+    .list-card {
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 16px 4px;
+      border-bottom: 1px solid #f0f0f4;
+    }
+
+    .task:last-child {
+      border-bottom: none;
+    }
+
+    .checkbox {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 2px solid #c7c7cc;
+      background: #fff;
+      appearance: none;
+      cursor: pointer;
+      position: relative;
+      margin: 0;
+    }
+
+    .checkbox:checked {
+      background: #34c759;
+      border-color: #34c759;
+    }
+
+    .checkbox:checked::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .task-main {
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: 17px;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .done .task-title {
+      color: #8e8e93;
+      text-decoration: line-through;
+    }
+
+    .task-date {
+      margin-top: 4px;
+      font-size: 13px;
+      color: #8e8e93;
+    }
+
+    .delete-btn {
+      border: none;
+      background: #fff2f2;
+      color: #ff3b30;
+      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      color: #8e8e93;
+      font-size: 17px;
+      padding: 30px 12px;
+    }
+
+    @media (max-width: 580px) {
+      .composer {
+        grid-template-columns: 1fr 48px 82px 48px;
+      }
+
+      h1 {
+        font-size: 38px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="app">
     <h1>Rappels</h1>
+
+    <div id="nextReminder" class="card reminder-banner" style="display:none;"></div>
 
     <div class="card">
       <div class="composer">
@@ -248,139 +257,207 @@
     </div>
   </div>
 
-<script>
-  function getTasks() {
-    return JSON.parse(localStorage.getItem("tasks") || "[]");
-  }
+  <script>
+    let reminderTimer = null;
+    let lastAlertedTaskId = null;
 
-  function saveTasks(tasks) {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }
-
-  function getTaskTimestamp(task) {
-    if (!task.date) return Number.MAX_SAFE_INTEGER;
-    const time = task.time && task.time.trim() ? task.time : "23:59";
-    return new Date(task.date + "T" + time + ":00").getTime();
-  }
-
-  function sortTasks(tasks) {
-    return tasks.sort((a, b) => {
-      if (a.done !== b.done) return a.done - b.done;
-      return getTaskTimestamp(a) - getTaskTimestamp(b);
-    });
-  }
-
-  function formatDateTime(dateStr, timeStr) {
-    if (!dateStr) return "";
-    const time = timeStr && timeStr.trim() ? timeStr : "00:00";
-    const d = new Date(dateStr + "T" + time + ":00");
-
-    return d.toLocaleString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-  }
-
-  function updateDateLabel() {
-    const date = document.getElementById("taskDate").value;
-    const time = document.getElementById("taskTime").value;
-
-    document.getElementById("dateLabel").textContent =
-      date ? "Prévu : " + formatDateTime(date, time) : "";
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  function addTask() {
-    const input = document.getElementById("taskInput");
-    const dateInput = document.getElementById("taskDate");
-    const timeInput = document.getElementById("taskTime");
-    const text = input.value.trim();
-
-    if (!text) return;
-
-    const tasks = getTasks();
-    tasks.push({
-      id: Date.now(),
-      text: text,
-      date: dateInput.value || "",
-      time: timeInput.value || "",
-      done: false
-    });
-
-    saveTasks(tasks);
-    input.value = "";
-    dateInput.value = "";
-    timeInput.value = "09:00";
-    updateDateLabel();
-    render();
-  }
-
-  function toggleTask(id) {
-    const tasks = getTasks().map(task =>
-      task.id === id ? { ...task, done: !task.done } : task
-    );
-    saveTasks(tasks);
-    render();
-  }
-
-  function deleteTask(id) {
-    const tasks = getTasks().filter(task => task.id !== id);
-    saveTasks(tasks);
-    render();
-  }
-
-  function render() {
-    const list = document.getElementById("taskList");
-    const empty = document.getElementById("emptyState");
-    const tasks = sortTasks(getTasks());
-
-    list.innerHTML = "";
-
-    if (tasks.length === 0) {
-      empty.style.display = "block";
-      return;
+    function getTasks() {
+      return JSON.parse(localStorage.getItem("tasks") || "[]");
     }
 
-    empty.style.display = "none";
+    function saveTasks(tasks) {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
 
-    tasks.forEach(task => {
-      const row = document.createElement("div");
-      row.className = "task" + (task.done ? " done" : "");
+    function getTaskTimestamp(task) {
+      if (!task.date) return Number.MAX_SAFE_INTEGER;
+      const time = task.time && task.time.trim() ? task.time : "23:59";
+      return new Date(task.date + "T" + time + ":00").getTime();
+    }
 
-      row.innerHTML = `
-        <input class="checkbox" type="checkbox" ${task.done ? "checked" : ""}>
-        <div class="task-main">
-          <div class="task-title">${escapeHtml(task.text)}</div>
-          ${task.date ? `<div class="task-date">${formatDateTime(task.date, task.time)}</div>` : ""}
-        </div>
-        <button class="delete-btn" aria-label="Supprimer">🗑️</button>
-      `;
+    function sortTasks(tasks) {
+      return tasks.sort((a, b) => {
+        if (a.done !== b.done) return a.done - b.done;
+        return getTaskTimestamp(a) - getTaskTimestamp(b);
+      });
+    }
 
-      row.querySelector(".checkbox").addEventListener("change", () => toggleTask(task.id));
-      row.querySelector(".delete-btn").addEventListener("click", () => deleteTask(task.id));
+    function formatDateTime(dateStr, timeStr) {
+      if (!dateStr) return "";
+      const time = timeStr && timeStr.trim() ? timeStr : "00:00";
+      const d = new Date(dateStr + "T" + time + ":00");
 
-      list.appendChild(row);
+      return d.toLocaleString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function updateDateLabel() {
+      const date = document.getElementById("taskDate").value;
+      const time = document.getElementById("taskTime").value;
+
+      document.getElementById("dateLabel").textContent =
+        date ? "Prévu : " + formatDateTime(date, time) : "";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const dateInput = document.getElementById("taskDate");
+      const timeInput = document.getElementById("taskTime");
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      const tasks = getTasks();
+      tasks.push({
+        id: Date.now(),
+        text: text,
+        date: dateInput.value || "",
+        time: timeInput.value || "",
+        done: false
+      });
+
+      saveTasks(tasks);
+      input.value = "";
+      dateInput.value = "";
+      timeInput.value = "09:00";
+      updateDateLabel();
+      render();
+      scheduleNextReminder();
+    }
+
+    function toggleTask(id) {
+      const tasks = getTasks().map(task =>
+        task.id === id ? { ...task, done: !task.done } : task
+      );
+      saveTasks(tasks);
+      render();
+      scheduleNextReminder();
+    }
+
+    function deleteTask(id) {
+      const tasks = getTasks().filter(task => task.id !== id);
+      saveTasks(tasks);
+      render();
+      scheduleNextReminder();
+    }
+
+    function getUpcomingTasks() {
+      const now = Date.now();
+      return getTasks()
+        .filter(task => !task.done && task.date && getTaskTimestamp(task) >= now)
+        .sort((a, b) => getTaskTimestamp(a) - getTaskTimestamp(b));
+    }
+
+    function updateNextReminderBanner() {
+      const banner = document.getElementById("nextReminder");
+      const upcoming = getUpcomingTasks();
+
+      if (upcoming.length === 0) {
+        banner.style.display = "none";
+        banner.innerHTML = "";
+        return;
+      }
+
+      const next = upcoming[0];
+      banner.style.display = "block";
+      banner.innerHTML =
+        "⏰ Prochaine échéance : <strong>" +
+        escapeHtml(next.text) +
+        "</strong> — " +
+        formatDateTime(next.date, next.time);
+    }
+
+    function scheduleNextReminder() {
+      if (reminderTimer) {
+        clearTimeout(reminderTimer);
+        reminderTimer = null;
+      }
+
+      updateNextReminderBanner();
+
+      const upcoming = getUpcomingTasks();
+      if (upcoming.length === 0) return;
+
+      const next = upcoming[0];
+      const delay = getTaskTimestamp(next) - Date.now();
+
+      if (delay <= 0) {
+        if (lastAlertedTaskId !== next.id) {
+          lastAlertedTaskId = next.id;
+          alert("Rappel : " + next.text + "\n" + formatDateTime(next.date, next.time));
+        }
+        setTimeout(scheduleNextReminder, 1000);
+        return;
+      }
+
+      reminderTimer = setTimeout(() => {
+        if (lastAlertedTaskId !== next.id) {
+          lastAlertedTaskId = next.id;
+          alert("Rappel : " + next.text + "\n" + formatDateTime(next.date, next.time));
+        }
+        scheduleNextReminder();
+      }, delay);
+    }
+
+    function render() {
+      const list = document.getElementById("taskList");
+      const empty = document.getElementById("emptyState");
+      const tasks = sortTasks(getTasks());
+
+      list.innerHTML = "";
+
+      if (tasks.length === 0) {
+        empty.style.display = "block";
+        updateNextReminderBanner();
+        return;
+      }
+
+      empty.style.display = "none";
+
+      tasks.forEach(task => {
+        const row = document.createElement("div");
+        row.className = "task" + (task.done ? " done" : "");
+
+        row.innerHTML = `
+          <input class="checkbox" type="checkbox" ${task.done ? "checked" : ""}>
+          <div class="task-main">
+            <div class="task-title">${escapeHtml(task.text)}</div>
+            ${task.date ? `<div class="task-date">${formatDateTime(task.date, task.time)}</div>` : ""}
+          </div>
+          <button class="delete-btn" aria-label="Supprimer">🗑️</button>
+        `;
+
+        row.querySelector(".checkbox").addEventListener("change", () => toggleTask(task.id));
+        row.querySelector(".delete-btn").addEventListener("click", () => deleteTask(task.id));
+
+        list.appendChild(row);
+      });
+
+      updateNextReminderBanner();
+    }
+
+    document.getElementById("taskInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") addTask();
     });
-  }
 
-  document.getElementById("taskInput").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") addTask();
-  });
+    document.getElementById("taskDate").addEventListener("change", updateDateLabel);
+    document.getElementById("taskTime").addEventListener("change", updateDateLabel);
+    document.getElementById("taskTime").addEventListener("input", updateDateLabel);
 
-  document.getElementById("taskDate").addEventListener("change", updateDateLabel);
-  document.getElementById("taskTime").addEventListener("change", updateDateLabel);
-  document.getElementById("taskTime").addEventListener("input", updateDateLabel);
-
-  updateDateLabel();
-  render();
-</script>
+    updateDateLabel();
+    render();
+    scheduleNextReminder();
+  </script>
 </body>
 </html>
