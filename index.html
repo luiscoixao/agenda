@@ -53,7 +53,6 @@ gap:6px;
 background:#f0f3ff;
 border-radius:14px;
 padding:10px 12px;
-font-size:16px;
 }
 
 .date-btn input{
@@ -69,6 +68,7 @@ border:none;
 border-radius:14px;
 padding:14px 16px;
 font-weight:600;
+font-size:18px;
 }
 
 ul{
@@ -109,6 +109,7 @@ background:#ffe7e7;
 border:none;
 border-radius:10px;
 padding:8px 10px;
+font-size:14px;
 }
 
 </style>
@@ -148,7 +149,7 @@ padding:8px 10px;
 <script>
 
 function getTasks(){
-return JSON.parse(localStorage.getItem("tasks")||"[]")
+return JSON.parse(localStorage.getItem("tasks") || "[]")
 }
 
 function saveTasks(tasks){
@@ -162,7 +163,7 @@ let date=document.getElementById("taskDate").value
 
 let text=input.value.trim()
 
-if(!text)return
+if(!text) return
 
 let tasks=getTasks()
 
@@ -185,7 +186,9 @@ render()
 function toggle(id){
 
 let tasks=getTasks().map(t=>{
-if(t.id===id)t.done=!t.done
+if(t.id===id){
+t.done=!t.done
+}
 return t
 })
 
@@ -219,17 +222,15 @@ let li=document.createElement("li")
 
 li.className="task"+(task.done?" done":"")
 
-li.innerHTML=`
+let dateHTML=""
+if(task.date){
+dateHTML='<div class="task-date">📅 '+task.date+'</div>'
+}
 
-<input type="checkbox" ${task.done?"checked":""}>
-
-<div class="task-title">${task.text}
-${task.date?`<div class="task-date">📅 ${task.date}</div>`:""}
-</div>
-
-<button class="delete">✕</button>
-
-`
+li.innerHTML=
+'<input type="checkbox" '+(task.done?'checked':'')+'>'+
+'<div class="task-title">'+task.text+dateHTML+'</div>'+
+'<button class="delete">✕</button>'
 
 li.querySelector("input").onclick=()=>toggle(task.id)
 
@@ -241,8 +242,10 @@ list.appendChild(li)
 
 }
 
-document.getElementById("taskInput").addEventListener("keydown",e=>{
-if(e.key==="Enter")addTask()
+document.getElementById("taskInput").addEventListener("keydown",function(e){
+if(e.key==="Enter"){
+addTask()
+}
 })
 
 render()
