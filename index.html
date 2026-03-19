@@ -197,6 +197,7 @@ function saveTasks(t){
   localStorage.setItem("tasks",JSON.stringify(t))
 }
 
+/* ✅ AJOUT UNIQUE : format français */
 function formatDateFr(date){
   const d = new Date(date + "T00:00:00");
   return d.toLocaleDateString("fr-FR", {
