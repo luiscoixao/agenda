@@ -55,10 +55,7 @@ h1{
   margin-top:6px;
 }
 
-.task-title{
-  font-size:18px;
-  font-weight:500;
-}
+.task-title{font-size:18px;font-weight:500}
 
 .task-meta{
   margin-top:6px;
@@ -66,13 +63,9 @@ h1{
   color:var(--accent);
   display:flex;
   gap:10px;
-  flex-wrap:wrap;
 }
 
-.task-empty{
-  color:var(--muted);
-  font-size:17px;
-}
+.task-empty{color:var(--muted);font-size:17px}
 
 .editor-backdrop{
   position:fixed;
@@ -113,7 +106,6 @@ h1{
 .field:focus{
   border-color:var(--accent);
   background:#fff;
-  outline:none;
 }
 
 .row{
@@ -139,7 +131,6 @@ input[type="time"]{
   border-radius:18px;
   font-weight:700;
   border:none;
-  font-size:16px;
 }
 
 .btn-cancel{background:#f2f2f7}
@@ -157,6 +148,7 @@ input[type="time"]{
   font-size:42px;
   border:none;
 }
+
 </style>
 </head>
 
@@ -189,23 +181,8 @@ input[type="time"]{
 </div>
 
 <script>
-function getTasks(){
-  return JSON.parse(localStorage.getItem("tasks")||"[]")
-}
-
-function saveTasks(t){
-  localStorage.setItem("tasks",JSON.stringify(t))
-}
-
-/* ✅ AJOUT UNIQUE : format français */
-function formatDateFr(date){
-  const d = new Date(date + "T00:00:00");
-  return d.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  });
-}
+function getTasks(){return JSON.parse(localStorage.getItem("tasks")||"[]")}
+function saveTasks(t){localStorage.setItem("tasks",JSON.stringify(t))}
 
 function render(){
   const list=document.getElementById("taskList")
@@ -228,10 +205,7 @@ function render(){
       <div class="task-bullet"></div>
       <div>
         <div class="task-title">${task.text}</div>
-        <div class="task-meta">
-          ${task.date ? formatDateFr(task.date) : ""}
-          ${task.time || ""}
-        </div>
+        <div class="task-meta">${task.date||""} ${task.time||""}</div>
       </div>
     `
     list.appendChild(el)
