@@ -37,6 +37,10 @@ h1{
 
 .list{display:flex;flex-direction:column}
 
+.task-shell{
+  overflow:hidden;
+}
+
 .task{
   display:grid;
   grid-template-columns:28px 1fr;
@@ -45,6 +49,8 @@ h1{
   border-bottom:1px solid var(--line);
   transform:translateX(0);
   transition:transform .18s ease;
+  touch-action:pan-y;
+  cursor:pointer;
 }
 
 .task-bullet{
@@ -63,6 +69,7 @@ h1{
   color:var(--accent);
   display:flex;
   gap:10px;
+  flex-wrap:wrap;
 }
 
 .task-empty{color:var(--muted);font-size:17px}
@@ -106,6 +113,7 @@ h1{
 .field:focus{
   border-color:var(--accent);
   background:#fff;
+  outline:none;
 }
 
 .row{
@@ -131,6 +139,7 @@ input[type="time"]{
   border-radius:18px;
   font-weight:700;
   border:none;
+  font-size:16px;
 }
 
 .btn-cancel{background:#f2f2f7}
@@ -148,7 +157,6 @@ input[type="time"]{
   font-size:42px;
   border:none;
 }
-
 </style>
 </head>
 
@@ -181,8 +189,22 @@ input[type="time"]{
 </div>
 
 <script>
+let editingIndex = null
+
 function getTasks(){return JSON.parse(localStorage.getItem("tasks")||"[]")}
 function saveTasks(t){localStorage.setItem("tasks",JSON.stringify(t))}
+
+function formatDateFr(date){
+  if(!date) return ""
+  const parts = date.split("-")
+  if(parts.length !== 3) return date
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+  return d.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  })
+}
 
 function render(){
   const list=document.getElementById("taskList")
@@ -198,30 +220,130 @@ function render(){
 
   empty.style.display="none"
 
-  tasks.forEach(task=>{
+  tasks.forEach((task,index)=>{
+    const shell=document.createElement("div")
+    shell.className="task-shell"
+
     const el=document.createElement("div")
     el.className="task"
     el.innerHTML=`
       <div class="task-bullet"></div>
       <div>
         <div class="task-title">${task.text}</div>
-        <div class="task-meta">${task.date||""} ${task.time||""}</div>
+        <div class="task-meta">
+          ${task.date ? formatDateFr(task.date) : ""} ${task.time||""}
+        </div>
       </div>
     `
-    list.appendChild(el)
+
+    shell.appendChild(el)
+    list.appendChild(shell)
+
+    el.addEventListener("click",()=>{
+      if(el.dataset.swiped==="1") return
+      openEditor(index)
+    })
+
+    attachSwipe(el,{
+      onEdit:()=>openEditor(index),
+      onDelete:()=>deleteTask(index)
+    })
   })
+}
+
+function attachSwipe(el,handlers){
+  let startX=0
+  let currentX=0
+  let dragging=false
+  let moved=false
+
+  const clamp=(value,min,max)=>Math.min(Math.max(value,min),max)
+
+  function start(x){
+    startX=x
+    currentX=0
+    dragging=true
+    moved=false
+    el.style.transition="none"
+  }
+
+  function move(x){
+    if(!dragging) return
+    currentX=clamp(x-startX,-70,70)
+    if(Math.abs(currentX)>8) moved=true
+    el.style.transform=`translateX(${currentX}px)`
+  }
+
+  function end(){
+    if(!dragging) return
+    dragging=false
+    el.style.transition="transform .18s ease"
+
+    if(currentX<=-56){
+      el.style.transform="translateX(-70px)"
+      setTimeout(()=>{
+        el.style.transform="translateX(0)"
+        handlers.onDelete()
+      },120)
+    }else if(currentX>=56){
+      el.style.transform="translateX(70px)"
+      setTimeout(()=>{
+        el.style.transform="translateX(0)"
+        handlers.onEdit()
+      },120)
+    }else{
+      el.style.transform="translateX(0)"
+    }
+
+    if(moved){
+      el.dataset.swiped="1"
+      setTimeout(()=>{
+        el.dataset.swiped="0"
+      },220)
+    }
+  }
+
+  el.addEventListener("touchstart",e=>start(e.touches[0].clientX),{passive:true})
+  el.addEventListener("touchmove",e=>move(e.touches[0].clientX),{passive:true})
+  el.addEventListener("touchend",end)
+
+  el.addEventListener("mousedown",e=>start(e.clientX))
+  window.addEventListener("mousemove",e=>move(e.clientX))
+  window.addEventListener("mouseup",end)
 }
 
 document.getElementById("fab").onclick=()=>openEditor()
 document.getElementById("cancelBtn").onclick=closeEditor
 document.getElementById("saveBtn").onclick=save
 
-function openEditor(){
-  document.getElementById("editorBackdrop").classList.add("open")
+function openEditor(index=null){
+  const backdrop=document.getElementById("editorBackdrop")
+  const title=document.querySelector(".editor-title")
+  const text=document.getElementById("taskText")
+  const date=document.getElementById("taskDate")
+  const time=document.getElementById("taskTime")
+
+  editingIndex=index
+
+  if(index===null){
+    title.textContent="Nouveau rappel"
+    text.value=""
+    date.value=""
+    time.value="09:00"
+  }else{
+    const task=getTasks()[index]
+    title.textContent="Modifier le rappel"
+    text.value=task.text||""
+    date.value=task.date||""
+    time.value=task.time||"09:00"
+  }
+
+  backdrop.classList.add("open")
 }
 
 function closeEditor(){
   document.getElementById("editorBackdrop").classList.remove("open")
+  editingIndex=null
 }
 
 function save(){
@@ -229,14 +351,30 @@ function save(){
   if(!text)return
 
   const tasks=getTasks()
-  tasks.push({
-    text,
-    date:document.getElementById("taskDate").value,
-    time:document.getElementById("taskTime").value
-  })
+
+  if(editingIndex===null){
+    tasks.push({
+      text,
+      date:document.getElementById("taskDate").value,
+      time:document.getElementById("taskTime").value
+    })
+  }else{
+    tasks[editingIndex]={
+      text,
+      date:document.getElementById("taskDate").value,
+      time:document.getElementById("taskTime").value
+    }
+  }
 
   saveTasks(tasks)
   closeEditor()
+  render()
+}
+
+function deleteTask(index){
+  const tasks=getTasks()
+  tasks.splice(index,1)
+  saveTasks(tasks)
   render()
 }
 
