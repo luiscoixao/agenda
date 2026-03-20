@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<link rel="apple-touch-icon" href="icon.png" />
+<title>Rappels</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg:#f3f3f6;
+  --text:#111;
+  --muted:#a1a1aa;
+  --accent:#ff0a78;
+  --line:#ececf1;
+}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding:28px 18px 110px;
+}
+
+.app{max-width:760px;margin:0 auto}
+
+h1{
+  margin:0 0 26px;
+  font-size:46px;
+  font-weight:800;
+  letter-spacing:-0.04em;
+  color:var(--accent);
+}
+
+.list{display:flex;flex-direction:column}
+
+.task-shell{
+  overflow:hidden;
+}
+
+.task{
+  display:grid;
+  grid-template-columns:28px 1fr;
+  gap:12px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+  transform:translateX(0);
+  transition:transform .18s ease;
+  touch-action:pan-y;
+  cursor:pointer;
+}
+
+.task-bullet{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:1.5px solid #d1d1d6;
+  margin-top:6px;
+}
+
+.task-title{font-size:18px;font-weight:500}
+
+.task-meta{
+  margin-top:6px;
+  font-size:14px;
+  color:var(--accent);
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.task-empty{color:var(--muted);font-size:17px}
+
+.editor-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.2);
+  display:none;
+  align-items:flex-end;
+  padding:12px;
+}
+
+.editor-backdrop.open{display:flex}
+
+.editor-sheet{
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:18px;
+}
+
+.editor-title{
+  font-size:22px;
+  font-weight:700;
+  color:var(--accent);
+  margin-bottom:12px;
+}
+
+.field{
+  width:100%;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid #e7e7ec;
+  margin-bottom:12px;
+  font-size:17px;
+  flex:1;
+  min-width:0;
+}
+
+.field:focus{
+  border-color:var(--accent);
+  background:#fff;
+  outline:none;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+input[type="date"],
+input[type="time"]{
+  -webkit-appearance:none;
+  appearance:none;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+}
+
+.btn{
+  flex:1;
+  padding:14px;
+  border-radius:18px;
+  font-weight:700;
+  border:none;
+  font-size:16px;
+}
+
+.btn-cancel{background:#f2f2f7}
+.btn-save{background:var(--accent);color:#fff}
+
+.fab{
+  position:fixed;
+  right:22px;
+  bottom:28px;
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  background:var(--accent);
+  color:#fff;
+  font-size:42px;
+  border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+  <h1>Rappels</h1>
+  <div id="taskList" class="list"></div>
+  <div id="emptyState" class="task-empty">Aucun rappel</div>
+</div>
+
+<button id="fab" class="fab">+</button>
+
+<div id="editorBackdrop" class="editor-backdrop">
+  <div class="editor-sheet">
+    <div class="editor-title">Nouveau rappel</div>
+
+    <input id="taskText" class="field" placeholder="Intitulé"/>
+
+    <div class="row">
+      <input id="taskDate" type="date" class="field"/>
+      <input id="taskTime" type="time" class="field" value="09:00"/>
+    </div>
+
+    <div class="actions">
+      <button id="cancelBtn" class="btn btn-cancel">Annuler</button>
+      <button id="saveBtn" class="btn btn-save">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let editingIndex = null
+
+function getTasks(){return JSON.parse(localStorage.getItem("tasks")||"[]")}
+function saveTasks(t){localStorage.setItem("tasks",JSON.stringify(t))}
+
+function formatDateFr(date){
+  if(!date) return ""
+  const parts = date.split("-")
+  if(parts.length !== 3) return date
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+  return d.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  })
+}
+
+function render(){
+  const list=document.getElementById("taskList")
+  const empty=document.getElementById("emptyState")
+  const tasks=getTasks()
+
+  list.innerHTML=""
+
+  if(!tasks.length){
+    empty.style.display="block"
+    return
+  }
+
+  empty.style.display="none"
+
+  tasks.forEach((task,index)=>{
+    const shell=document.createElement("div")
+    shell.className="task-shell"
+
+    const el=document.createElement("div")
+    el.className="task"
+    el.innerHTML=`
+      <div class="task-bullet"></div>
+      <div>
+        <div class="task-title">${task.text}</div>
+        <div class="task-meta">
+          ${task.date ? formatDateFr(task.date) : ""} ${task.time||""}
+        </div>
+      </div>
+    `
+
+    shell.appendChild(el)
+    list.appendChild(shell)
+
+    el.addEventListener("click",()=>{
+      if(el.dataset.swiped==="1") return
+      openEditor(index)
+    })
+
+    attachSwipe(el,{
+      onEdit:()=>openEditor(index),
+      onDelete:()=>deleteTask(index)
+    })
+  })
+}
+
+function attachSwipe(el,handlers){
+  let startX=0
+  let currentX=0
+  let dragging=false
+  let moved=false
+
+  const clamp=(value,min,max)=>Math.min(Math.max(value,min),max)
+
+  function start(x){
+    startX=x
+    currentX=0
+    dragging=true
+    moved=false
+    el.style.transition="none"
+  }
+
+  function move(x){
+    if(!dragging) return
+    currentX=clamp(x-startX,-70,70)
+    if(Math.abs(currentX)>8) moved=true
+    el.style.transform=`translateX(${currentX}px)`
+  }
+
+  function end(){
+    if(!dragging) return
+    dragging=false
+    el.style.transition="transform .18s ease"
+
+    if(currentX<=-56){
+      el.style.transform="translateX(-70px)"
+      setTimeout(()=>{
+        el.style.transform="translateX(0)"
+        handlers.onDelete()
+      },120)
+    }else if(currentX>=56){
+      el.style.transform="translateX(70px)"
+      setTimeout(()=>{
+        el.style.transform="translateX(0)"
+        handlers.onEdit()
+      },120)
+    }else{
+      el.style.transform="translateX(0)"
+    }
+
+    if(moved){
+      el.dataset.swiped="1"
+      setTimeout(()=>{
+        el.dataset.swiped="0"
+      },220)
+    }
+  }
+
+  el.addEventListener("touchstart",e=>start(e.touches[0].clientX),{passive:true})
+  el.addEventListener("touchmove",e=>move(e.touches[0].clientX),{passive:true})
+  el.addEventListener("touchend",end)
+
+  el.addEventListener("mousedown",e=>start(e.clientX))
+  window.addEventListener("mousemove",e=>move(e.clientX))
+  window.addEventListener("mouseup",end)
+}
+
+document.getElementById("fab").onclick=()=>openEditor()
+document.getElementById("cancelBtn").onclick=closeEditor
+document.getElementById("saveBtn").onclick=save
+
+function openEditor(index=null){
+  const backdrop=document.getElementById("editorBackdrop")
+  const title=document.querySelector(".editor-title")
+  const text=document.getElementById("taskText")
+  const date=document.getElementById("taskDate")
+  const time=document.getElementById("taskTime")
+
+  editingIndex=index
+
+  if(index===null){
+    title.textContent="Nouveau rappel"
+    text.value=""
+    date.value=""
+    time.value="09:00"
+  }else{
+    const task=getTasks()[index]
+    title.textContent="Modifier le rappel"
+    text.value=task.text||""
+    date.value=task.date||""
+    time.value=task.time||"09:00"
+  }
+
+  backdrop.classList.add("open")
+}
+
+function closeEditor(){
+  document.getElementById("editorBackdrop").classList.remove("open")
+  editingIndex=null
+}
+
+function save(){
+  const text=document.getElementById("taskText").value
+  if(!text)return
+
+  const tasks=getTasks()
+
+  if(editingIndex===null){
+    tasks.push({
+      text,
+      date:document.getElementById("taskDate").value,
+      time:document.getElementById("taskTime").value
+    })
+  }else{
+    tasks[editingIndex]={
+      text,
+      date:document.getElementById("taskDate").value,
+      time:document.getElementById("taskTime").value
+    }
+  }
+
+  saveTasks(tasks)
+  closeEditor()
+  render()
+}
+
+function deleteTask(index){
+  const tasks=getTasks()
+  tasks.splice(index,1)
+  saveTasks(tasks)
+  render()
+}
+
+render()
+</script>
+
+</body>
+</html>
