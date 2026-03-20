@@ -37,9 +37,7 @@ h1{
 
 .list{display:flex;flex-direction:column}
 
-.task-shell{
-  overflow:hidden;
-}
+.task-shell{overflow:hidden}
 
 .task{
   display:grid;
@@ -157,6 +155,18 @@ input[type="time"]{
   font-size:42px;
   border:none;
 }
+
+/* bouton import */
+.import-btn{
+  position:fixed;
+  left:22px;
+  bottom:28px;
+  padding:12px 16px;
+  border-radius:16px;
+  border:none;
+  background:#e5e5ea;
+  font-size:14px;
+}
 </style>
 </head>
 
@@ -169,6 +179,10 @@ input[type="time"]{
 </div>
 
 <button id="fab" class="fab">+</button>
+
+<!-- IMPORT CSV -->
+<input type="file" id="csvInput" accept=".csv" style="display:none">
+<button class="import-btn" onclick="document.getElementById('csvInput').click()">Importer</button>
 
 <div id="editorBackdrop" class="editor-backdrop">
   <div class="editor-sheet">
@@ -251,65 +265,65 @@ function render(){
   })
 }
 
-function attachSwipe(el,handlers){
-  let startX=0
-  let currentX=0
-  let dragging=false
-  let moved=false
+/* IMPORT CSV */
+document.getElementById("csvInput").addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
 
-  const clamp=(value,min,max)=>Math.min(Math.max(value,min),max)
+  const reader = new FileReader()
 
-  function start(x){
-    startX=x
-    currentX=0
-    dragging=true
-    moved=false
-    el.style.transition="none"
+  reader.onload = function(event){
+    const text = event.target.result
+    const lines = text.split("\n")
+    const tasks = getTasks()
+
+    lines.forEach((line,index)=>{
+      if(index===0) return
+
+      const parts=line.split(/[,;]/)
+
+      const textTask=(parts[0]||"").trim()
+      const date=(parts[1]||"").trim()
+      const time=(parts[2]||"").trim()
+
+      if(!textTask) return
+
+      tasks.push({text:textTask,date,time})
+    })
+
+    saveTasks(tasks)
+    render()
   }
 
+  reader.readAsText(file)
+})
+
+/* SWIPE */
+function attachSwipe(el,handlers){
+  let startX=0,currentX=0,dragging=false,moved=false
+  const clamp=(v,min,max)=>Math.min(Math.max(v,min),max)
+
+  function start(x){startX=x;dragging=true;el.style.transition="none"}
   function move(x){
-    if(!dragging) return
+    if(!dragging)return
     currentX=clamp(x-startX,-70,70)
-    if(Math.abs(currentX)>8) moved=true
+    if(Math.abs(currentX)>8)moved=true
     el.style.transform=`translateX(${currentX}px)`
   }
-
   function end(){
-    if(!dragging) return
+    if(!dragging)return
     dragging=false
     el.style.transition="transform .18s ease"
 
-    if(currentX<=-56){
-      el.style.transform="translateX(-70px)"
-      setTimeout(()=>{
-        el.style.transform="translateX(0)"
-        handlers.onDelete()
-      },120)
-    }else if(currentX>=56){
-      el.style.transform="translateX(70px)"
-      setTimeout(()=>{
-        el.style.transform="translateX(0)"
-        handlers.onEdit()
-      },120)
-    }else{
-      el.style.transform="translateX(0)"
-    }
+    if(currentX<=-56){handlers.onDelete()}
+    else if(currentX>=56){handlers.onEdit()}
 
-    if(moved){
-      el.dataset.swiped="1"
-      setTimeout(()=>{
-        el.dataset.swiped="0"
-      },220)
-    }
+    el.style.transform="translateX(0)"
   }
 
-  el.addEventListener("touchstart",e=>start(e.touches[0].clientX),{passive:true})
-  el.addEventListener("touchmove",e=>move(e.touches[0].clientX),{passive:true})
+  el.addEventListener("touchstart",e=>start(e.touches[0].clientX))
+  el.addEventListener("touchmove",e=>move(e.touches[0].clientX))
   el.addEventListener("touchend",end)
-
-  el.addEventListener("mousedown",e=>start(e.clientX))
-  window.addEventListener("mousemove",e=>move(e.clientX))
-  window.addEventListener("mouseup",end)
 }
 
 document.getElementById("fab").onclick=()=>openEditor()
@@ -317,33 +331,12 @@ document.getElementById("cancelBtn").onclick=closeEditor
 document.getElementById("saveBtn").onclick=save
 
 function openEditor(index=null){
-  const backdrop=document.getElementById("editorBackdrop")
-  const title=document.querySelector(".editor-title")
-  const text=document.getElementById("taskText")
-  const date=document.getElementById("taskDate")
-  const time=document.getElementById("taskTime")
-
   editingIndex=index
-
-  if(index===null){
-    title.textContent="Nouveau rappel"
-    text.value=""
-    date.value=""
-    time.value="09:00"
-  }else{
-    const task=getTasks()[index]
-    title.textContent="Modifier le rappel"
-    text.value=task.text||""
-    date.value=task.date||""
-    time.value=task.time||"09:00"
-  }
-
-  backdrop.classList.add("open")
+  document.getElementById("editorBackdrop").classList.add("open")
 }
 
 function closeEditor(){
   document.getElementById("editorBackdrop").classList.remove("open")
-  editingIndex=null
 }
 
 function save(){
